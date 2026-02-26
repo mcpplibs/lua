@@ -1,4 +1,4 @@
-xname = "mcpplibs-templates"
+xname = "mcpplibs-capi-lua"
 
 -- install by `xlings install`
 xim = {
