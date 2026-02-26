@@ -47,6 +47,7 @@ jobs:
       - name: Build
         run: |
           xmake f -m release -y -vv
+          xmake build -y -vv mcpplibs-capi-lua
           xmake -y -vv -j$(nproc)
 
       - name: Test
