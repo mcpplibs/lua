@@ -47,13 +47,18 @@ jobs:
       - name: Build
         run: |
           xmake f -m release -y -vv
+          xmake build -y -vv mcpplibs-capi-lua
           xmake -y -vv -j$(nproc)
 
       - name: Test
-        run: xmake run templates_test
+        run: xmake run capi_lua_test
 
       - name: Run examples
-        run: xmake run basic
+        run: |
+          xmake run basic
+          xmake run table
+          xmake run function
+          xmake run eval
 
   build-macos:
     runs-on: macos-14
@@ -90,7 +95,11 @@ jobs:
           xmake -y -vv -j$env:NUMBER_OF_PROCESSORS
 
       - name: Test
-        run: xmake run templates_test
+        run: xmake run capi_lua_test
 
       - name: Run examples
-        run: xmake run basic
+        run: |
+          xmake run basic
+          xmake run table
+          xmake run function
+          xmake run eval
