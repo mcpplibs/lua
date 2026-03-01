@@ -10,7 +10,13 @@ namespace mcpplibs::capi::lua {
 // State Management
 // ============================================================================
 
-State* newstate(Alloc f, void* ud) { return ::lua_newstate(f, ud); }
+State* newstate(Alloc f, void* ud) {
+#if LUA_VERSION_NUM >= 505
+    return ::lua_newstate(f, ud, 0);
+#else
+    return ::lua_newstate(f, ud);
+#endif
+}
 void close(State* L) { ::lua_close(L); }
 State* newthread(State* L) { return ::lua_newthread(L); }
 CFunction atpanic(State* L, CFunction panicf) { return ::lua_atpanic(L, panicf); }
