@@ -99,11 +99,19 @@ inline constexpr int GCCOLLECT    = LUA_GCCOLLECT;
 inline constexpr int GCCOUNT      = LUA_GCCOUNT;
 inline constexpr int GCCOUNTB     = LUA_GCCOUNTB;
 inline constexpr int GCSTEP       = LUA_GCSTEP;
+#ifdef LUA_GCSETPAUSE
 inline constexpr int GCSETPAUSE   = LUA_GCSETPAUSE;
+#endif
+#ifdef LUA_GCSETSTEPMUL
 inline constexpr int GCSETSTEPMUL = LUA_GCSETSTEPMUL;
+#endif
 inline constexpr int GCISRUNNING  = LUA_GCISRUNNING;
+#ifdef LUA_GCGEN
 inline constexpr int GCGEN        = LUA_GCGEN;
+#endif
+#ifdef LUA_GCINC
 inline constexpr int GCINC        = LUA_GCINC;
+#endif
 
 // ============================================================================
 // Constants — Hook Masks
