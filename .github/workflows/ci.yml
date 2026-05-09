@@ -2,104 +2,32 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
-  build-linux:
+  build:
+    name: build + test (linux x86_64, mcpp)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup xmake
-        uses: xmake-io/github-action-setup-xmake@v1
-        with:
-          xmake-version: latest
-          package-cache: true
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
-
-      - name: Install Xlings
+      - name: Install xlings
         env:
-          XLINGS_NON_INTERACTIVE: 1
+          XLINGS_VERSION: 0.4.25
         run: |
-          curl -fsSL https://raw.githubusercontent.com/d2learn/xlings/refs/heads/main/tools/other/quick_install.sh | bash
-          echo "PATH=$HOME/.xlings/subos/current/bin:$PATH" >> "$GITHUB_ENV"
+          tarball="xlings-${XLINGS_VERSION}-linux-x86_64.tar.gz"
+          curl -fsSL -o "/tmp/${tarball}" \
+            "https://github.com/d2learn/xlings/releases/download/v${XLINGS_VERSION}/${tarball}"
+          tar -xzf "/tmp/${tarball}" -C /tmp
+          "/tmp/xlings-${XLINGS_VERSION}-linux-x86_64/subos/default/bin/xlings" self install
+          echo "$HOME/.xlings/subos/current/bin" >> "$GITHUB_PATH"
 
-      - name: Install GCC 15.1 with Xlings
-        run: |
-          xlings install gcc@15.1 -y
+      - name: Install workspace tools (.xlings.json → mcpp 0.0.3)
+        run: xlings install -y
 
-      - name: Build
-        run: |
-          xmake f -m release -y -vv
-          xmake build -y -vv mcpplibs-capi-lua
-          xmake -y -vv -j$(nproc)
+      - name: Build with mcpp
+        run: mcpp build
 
-      - name: Test
-        run: xmake run capi_lua_test
-
-      - name: Run examples
-        run: |
-          xmake run basic
-          xmake run table
-          xmake run function
-          xmake run eval
-
-  build-macos:
-    runs-on: macos-14
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: brew install xmake llvm@20
-
-      - name: Build
-        run: |
-          export PATH=/opt/homebrew/opt/llvm@20/bin:$PATH
-          xmake f --toolchain=llvm --sdk=/opt/homebrew/opt/llvm@20 -m release -y -vv
-          xmake -y -vv -j$(sysctl -n hw.ncpu)
-
-  build-windows:
-    runs-on: windows-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup xmake
-        uses: xmake-io/github-action-setup-xmake@v1
-        with:
-          xmake-version: latest
-          package-cache: true
-
-      - name: Build
-        run: |
-          xmake f -m release -y -vv
-          xmake -y -vv -j$env:NUMBER_OF_PROCESSORS
-
-      - name: Test
-        run: xmake run capi_lua_test
-
-      - name: Run examples
-        run: |
-          xmake run basic
-          xmake run table
-          xmake run function
-          xmake run eval
+      - name: Run tests
+        run: mcpp test
