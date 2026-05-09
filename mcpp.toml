@@ -1,0 +1,25 @@
+[package]
+name        = "mcpplibs.capi.lua"
+version     = "0.0.3"
+description = "C++23 module wrapping the Lua 5.4 C API — `import mcpplibs.capi.lua;`"
+license     = "Apache-2.0"
+repo        = "https://github.com/mcpplibs/lua"
+
+[lib]
+# The primary module interface lives at `src/capi/lua.cppm`. The default
+# convention would look at `src/lua.cppm` (last segment of the package
+# name), so override explicitly.
+path = "src/capi/lua.cppm"
+
+[targets.capi-lua]
+kind = "lib"
+
+# `lua` is the upstream Lua 5.4 C library shipped via mcpp-index. mcpp
+# 0.0.3 propagates its headers (lua.h / lauxlib.h / lualib.h) into our
+# compile rule via the transitive include-dir walk.
+[dependencies]
+lua = "5.4.7"
+
+# `mcpp test` discovers tests/main.cpp automatically.
+[dev-dependencies]
+gtest = "1.15.2"
