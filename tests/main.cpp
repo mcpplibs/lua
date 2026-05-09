@@ -1097,7 +1097,5 @@ TEST(MiscTest, AtPanic) {
     lua::close(L);
 }
 
-int main(int argc, char** argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// (No `int main(...)` here — `mcpp test` auto-links gtest_main, which
+// supplies its own main() and runs every TEST registered above.)
