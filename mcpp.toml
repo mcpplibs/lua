@@ -12,8 +12,8 @@ path = "src/capi/lua.cppm"
 [targets.capi-lua]
 kind = "lib"
 
-[dependencies]
+[dependencies.compat]
 lua = "5.4.7"
 
-[dev-dependencies]
+[dev-dependencies.compat]
 gtest = "1.15.2"
