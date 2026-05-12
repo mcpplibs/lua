@@ -116,6 +116,34 @@ target("myapp")
     set_policy("build.c++.modules", true)
 ```
 
+### mcpp
+
+#### 添加依赖
+
+```bash
+mcpp add mcpplibs.capi:lua@0.0.3
+```
+
+或在 `mcpp.toml` 中手动添加：
+
+```toml
+[dependencies]
+"mcpplibs.capi:lua" = "0.0.3"
+```
+
+#### 构建
+
+```bash
+mcpp build
+```
+
+#### 代码示例
+
+```cpp
+import mcpplibs.capi.lua;
+// ... 参见上方"快速开始"
+```
+
 ## 覆盖范围
 
 封装了 Lua 5.4 C API 的核心功能：
